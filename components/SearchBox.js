@@ -1,47 +1,80 @@
-import React from 'react';
+import React from "react";
 import cities from "../lib/city.list.json";
+import Link from "next/link";
+import Router from "next/router";
 
-export default function SearchBox() {
-    const [query, setQuery] = React.useState("");
-    const [results, setResults] = React.useState([]);
+export default function SearchBox({ placeholder }) {
+  const [query, setQuery] = React.useState("");
+  const [results, setResults] = React.useState([]);
 
-    const onChange = (e) => {
-        const { value } = e.target;
-        setQuery(value);
-        let matchingCities = [];
+  React.useEffect(() => {
+    const clearQuery = () => setQuery("");
+    Router.events.on("routeChangeComplete", clearQuery);
 
-        // Loops through the cities array and checks if the query, if longer than 3, is in the array.
-        if (value.length > 0) {
-            for (let city of cities) {
-                if (matchingCities.length >= 5) {
-                    break;
-                }
+    return () => {
+      Router.events.off("routeChangeComplete", clearQuery);
+    };
+  }, []);
 
-                const match = city.name.toLowerCase().startsWith(value.toLowerCase());
-                if (match) {
-                    matchingCities.push(city);
-                }
-            }
+  const onChange = (e) => {
+    const { value } = e.target;
+    setQuery(value);
+
+    let matchingCities = [];
+
+    if (value.length > 0) {
+      for (let city of cities) {
+        if (matchingCities.length >= 5) {
+          break;
         }
 
-        return setResults(matchingCities);
-    };
+        const match = city.name.toLowerCase().startsWith(value.toLowerCase());
 
-    return (
-        <div className="search">
-            <input type="text" value={query} onChange={onChange}/>
+        if (match) {
+          const cityData = {
+            ...city,
+            slug: `${city.name.toLowerCase().replace(/ /g, "-")}-${city.id}`,
+          };
 
-            {query.length > 0 && results.length > 0 && (
-                <ul>
-                    {results.map((result) => (
-                        <li key={result.id}>
-                            <a href={`/city/${result.id}`}>
-                                {result.name}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
-            )}
-        </div>
-    )
+          matchingCities.push(cityData);
+          continue;
+        }
+      }
+    }
+
+    return setResults(matchingCities);
+  };
+
+  return (
+    <div className="search">
+      <input
+        type="text"
+        value={query}
+        onChange={onChange}
+        placeholder={placeholder ? placeholder : ""}
+      />
+
+      {query.length > 0 && (
+        <ul>
+          {results.length > 0 ? (
+            results.map((city) => {
+              return (
+                <li key={city.slug}>
+                  <Link href={`/location/${city.slug}`}>
+                    <a>
+                      {city.name}
+                      {city.state ? `, ${city.state}` : ""}{" "}
+                      <span>({city.country})</span>
+                    </a>
+                  </Link>
+                </li>
+              );
+            })
+          ) : (
+            <li className="search__no-results">No results found</li>
+          )}
+        </ul>
+      )}
+    </div>
+  );
 }
