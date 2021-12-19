@@ -1,6 +1,7 @@
 import React from 'react';
 
 export async function getServerSideProps(context) {
+    const cityID = getCity(context.params.city);
     const slug = context.params.city;
 
     return {
@@ -8,6 +9,13 @@ export async function getServerSideProps(context) {
             slug: slug,
         },
     };
+}
+
+const getCity = param => {
+    const cityParam = param.trim();
+    // get the id of the city by splitting the API
+    const splitCity = cityParam.split('-');
+    const id = splitCity[splitCity.length - 1];
 }
 
 export default function City({slug}) {
