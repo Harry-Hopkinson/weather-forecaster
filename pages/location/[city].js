@@ -9,8 +9,12 @@ export async function getServerSideProps(context) {
         return {
             notFound: true,
         };
-    }
-    
+    };
+
+    const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${city.coord.lat}&lon=${city.coord.lon}&appid=${process.env.API_KEY}&exclude=minutely&units=metric`
+    );
+
     const slug = context.params.city;
 
     return {
