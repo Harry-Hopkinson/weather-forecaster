@@ -10,9 +10,7 @@ export async function getServerSideProps(context) {
             notFound: true,
         };
     }
-
-    console.log(process.env.API_KEY);
-
+    
     const slug = context.params.city;
 
     return {
