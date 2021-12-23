@@ -4,6 +4,15 @@ import cities from "../../lib/city.list.json";
 export async function getServerSideProps(context) {
     const city = getCity(context.params.city);
     console.log(city);
+
+    if (!city) {
+        return {
+            notFound: true,
+        };
+    }
+
+    console.log(process.env.API_KEY);
+
     const slug = context.params.city;
 
     return {
