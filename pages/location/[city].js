@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import cities from "../../lib/city.list.json";
 
@@ -12,8 +13,18 @@ export async function getServerSideProps(context) {
     };
 
     const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/onecall?lat=${city.coord.lat}&lon=${city.coord.lon}&appid=${process.env.API_KEY}&exclude=minutely&units=metric`
+        `https://api.openweathermap.org/data/2.5/onecall?lat=${city.coord.lat}&lon=${city.coord.lon}&appid=${process.env.API_KEY}&units=metric&exclude=minutely`
     );
+
+    const data = await res.json();
+
+    if (!data) {
+        return {
+            notFound: true,
+        };
+    }
+
+    console.log(data);
 
     const slug = context.params.city;
 
