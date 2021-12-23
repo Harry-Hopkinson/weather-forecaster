@@ -31,6 +31,7 @@ export async function getServerSideProps(context) {
     return {
         props: {
             slug: slug,
+            data: data,
         },
     };
 }
@@ -56,7 +57,8 @@ const getCity = param => {
     }
 }
 
-export default function City({slug}) {
+export default function City({slug, data}) {
+    console.log(data);
     return (
         <div>
             <h1>City Page</h1>
