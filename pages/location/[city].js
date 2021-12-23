@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import React from 'react';
 import cities from "../../lib/city.list.json";
 
